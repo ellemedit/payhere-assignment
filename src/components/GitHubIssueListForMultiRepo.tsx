@@ -3,9 +3,9 @@
 import { useEffect } from "react";
 import { fetchIssuesForMultiRepos } from "~/core/octokit";
 
-import { LinearProgress } from "./LinearProgress";
 import styles from "./GitHubIssueListForMultiRepo.module.scss";
 import { usePagination } from "~/hooks/usePagination";
+import { BusyButton } from "./BusyButton";
 
 export function GitHubIssueListForMultiRepo({
   candidates,
@@ -18,18 +18,15 @@ export function GitHubIssueListForMultiRepo({
     .sort()
     .join("-");
 
-  const {
-    reset,
-    loadMore,
-    loadingMore,
-    data: issues,
-  } = usePagination((page) => {
-    return fetchIssuesForMultiRepos({ candidates, page });
-  });
+  const { reset, loadMore, getData } = usePagination((page) =>
+    fetchIssuesForMultiRepos({ candidates, page })
+  );
 
   useEffect(() => {
     reset();
   }, [candidateCacheKey, reset]);
+
+  const issues = getData().flatMap((x) => x);
 
   return (
     <div className={styles["issue-list"]}>
@@ -51,18 +48,7 @@ export function GitHubIssueListForMultiRepo({
           </div>
         );
       })}
-      <button
-        onClick={() => {
-          loadMore();
-        }}
-        disabled={loadingMore}
-        className={styles["load-more"]}
-      >
-        load more
-        {loadingMore && (
-          <LinearProgress className={styles["load-more-indicator"]} />
-        )}
-      </button>
+      <BusyButton onClick={() => loadMore()}>load more</BusyButton>
     </div>
   );
 }

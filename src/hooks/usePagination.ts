@@ -1,16 +1,20 @@
 "use client";
 
-import { use, useCallback, useState, useTransition } from "react";
+import { use, useCallback, useRef, useState, useTransition } from "react";
 
 export function usePagination<T extends (page: number) => Promise<any>>(
   fetcher: T
 ) {
   const [page, setPage] = useState(1);
   const [loadingMore, startLoadMore] = useTransition();
-  const [cache, setCache] = useState(() => new Map<number, ReturnType<T>>());
+  const cacheRef = useRef<Map<number, ReturnType<T>>>();
+  if (!cacheRef.current) {
+    cacheRef.current = new Map();
+  }
+  const cache = cacheRef.current as any as Map<any, any>;
 
   const reset = useCallback(() => {
-    setCache(new Map());
+    cacheRef.current = new Map();
     setPage(1);
   }, []);
 
@@ -20,22 +24,22 @@ export function usePagination<T extends (page: number) => Promise<any>>(
     });
   }, []);
 
-  const data = Array(page)
-    .fill(null)
-    .map((_, index) => index + 1)
-    .map((page) => {
-      if (!cache.has(page)) {
-        cache.set(page, fetcher(page) as any);
-      }
-      // use는 rule of hook 조건을 만족할 필요가 없는 유일한 훅입니다. 괜찮은 코드에요!
-      return use(cache.get(page)!);
-    })
-    .flatMap((x) => x);
+  function getData(): Awaited<ReturnType<T>>[] {
+    return Array(page)
+      .fill(null)
+      .map((_, index) => index + 1)
+      .map((page) => {
+        if (!cache.has(page)) {
+          cache.set(page, fetcher(page) as any);
+        }
+        return use(cache.get(page)!);
+      });
+  }
 
   return {
     loadingMore,
     loadMore,
     reset,
-    data,
+    getData,
   };
 }
