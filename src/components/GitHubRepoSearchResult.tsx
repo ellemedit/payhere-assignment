@@ -18,6 +18,7 @@ export function GitHubRepoSearchResult({ query }: { query: string }) {
   if (prevQuery !== query) {
     setPage(1);
     setPrevQuery(query);
+    cache.clear();
   }
 
   if (!query) {
