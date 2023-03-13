@@ -3,6 +3,7 @@
 import { use, useEffect, useState, useTransition } from "react";
 import { MdStar, MdStarOutline } from "react-icons/md";
 import { searchRepos } from "~/core/octokit";
+import { useCanLikeMore, useLikeActions, useLikedRepos } from "~/core/store";
 
 import styles from "./GitHubRepoSearchResult.module.scss";
 import { LinearProgress } from "./LinearProgress";
@@ -13,6 +14,9 @@ export function GitHubRepoSearchResult({ query }: { query: string }) {
   const [cache, setCache] = useState(
     () => new Map<number, ReturnType<typeof searchRepos>>()
   );
+  const likedRepos = useLikedRepos();
+  const canLikeMore = useCanLikeMore();
+  const actions = useLikeActions();
 
   useEffect(() => {
     setPage(1);
@@ -42,6 +46,7 @@ export function GitHubRepoSearchResult({ query }: { query: string }) {
   return (
     <div className={styles["repo-list"]}>
       {repos.map((repo) => {
+        const isLiked = likedRepos.has(repo.full_name);
         return (
           <div key={repo.id} className={styles["repo"]}>
             <img
@@ -53,17 +58,31 @@ export function GitHubRepoSearchResult({ query }: { query: string }) {
                 <h3 className={styles["repo-name"]}>
                   {repo.owner?.login} / {repo.name}
                 </h3>
-                <button className={styles["repo-action"]} aria-pressed={false}>
-                  <MdStarOutline />
+                <button
+                  className={styles["repo-action"]}
+                  aria-pressed={isLiked}
+                  onClick={() => {
+                    if (isLiked) {
+                      actions.unlikeRepo(repo.owner!.login, repo.name);
+                      return;
+                    }
+                    if (!canLikeMore) {
+                      alert("최대 4개까지만 좋아요할 수 있습니다.");
+                      return;
+                    }
+                    actions.likeRepo(repo.owner!.login, repo.name);
+                  }}
+                >
+                  {isLiked ? <MdStar /> : <MdStarOutline />}
                 </button>
               </div>
               <p className={styles["repo-description"]}>{repo.description}</p>
               <div className={styles["repo-secondary"]}>
                 <span>
-                  {repo.stargazers_count.toLocaleString("ko-KR")} Stars
+                  {repo.stargazers_count.toLocaleString("en-US")} Stars
                 </span>
                 <span>
-                  {new Date(repo.created_at).toLocaleDateString("ko-KR")}
+                  {new Date(repo.created_at).toLocaleDateString("en-US")}
                 </span>
               </div>
             </div>

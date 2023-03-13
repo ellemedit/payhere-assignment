@@ -9,10 +9,10 @@ import styles from "./GitHubIssueListForMultiRepo.module.scss";
 export function GitHubIssueListForMultiRepo({
   candidates,
 }: {
-  candidates: { owner: string; repo: string }[];
+  candidates: { owner: string; name: string }[];
 }) {
   const candidateCacheKey = [
-    ...candidates.map(({ owner, repo }) => [owner, repo].join("/")),
+    ...candidates.map(({ owner, name }) => [owner, name].join("/")),
   ]
     .sort()
     .join("-");
@@ -44,11 +44,17 @@ export function GitHubIssueListForMultiRepo({
       {issues.map((issue) => {
         return (
           <div key={issue.id} className={styles["issue"]}>
-            <div className={styles["issue-repo"]}>{/* {issue} */}</div>
-            <h3 className={styles["issue-title"]}>{issue.title}</h3>
+            <div className={styles["issue-repo"]}>
+              {issue.owner} / {issue.repo}
+            </div>
+            <h3 className={styles["issue-title"]}>
+              <a href={issue.html_url} target="_blank">
+                {issue.title}
+              </a>
+            </h3>
             <span className={styles["issue-minor"]}>
-              {issue.user?.login} / {issue.comments} comments /{" "}
-              {new Date(issue.created_at).toLocaleString("ko-KR")}
+              {issue.user?.login}, {issue.comments} comments,{" "}
+              {new Date(issue.created_at).toLocaleString("en-US")}
             </span>
           </div>
         );

@@ -18,3 +18,9 @@ yarn
 yarn build
 yarn start
 ```
+
+## 실행 화면
+
+![](./preview1.png)
+
+![](./preview2.png)

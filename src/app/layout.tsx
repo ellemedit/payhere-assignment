@@ -1,6 +1,7 @@
 import { Inter, Noto_Sans_KR } from "next/font/google";
 
 import { AppNavigation } from "~/components/AppNavigation";
+import { LikedRepoStoreProvider } from "~/core/store";
 
 import "./globals.css";
 import styles from "./layout.module.scss";
@@ -23,7 +24,7 @@ export default function RootLayout({
       <body className={[inter.className, notoSansKr.className].join(" ")}>
         <div className={styles.container}>
           <AppNavigation />
-          {children}
+          <LikedRepoStoreProvider>{children}</LikedRepoStoreProvider>
         </div>
       </body>
     </html>

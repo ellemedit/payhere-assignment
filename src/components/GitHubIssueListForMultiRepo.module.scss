@@ -1,3 +1,33 @@
+.issue-list {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 12px;
+}
+
+.issue {
+  border: 3px solid #222;
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 12px;
+}
+
+.issue-repo {
+  font-size: 14px;
+  font-weight: 500;
+  color: #222;
+}
+
+.issue-title {
+  font-size: 16px;
+}
+
+.issue-minor {
+  font-size: 13px;
+  color: #888;
+}
+
 .load-more {
   padding: 12px 16px;
   border: 3px solid #222;

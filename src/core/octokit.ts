@@ -21,16 +21,16 @@ export async function fetchIssuesForMultiRepos({
   page = 1,
   perPage = 40,
 }: {
-  candidates: { owner: string; repo: string }[];
+  candidates: { owner: string; name: string }[];
   page?: number;
   perPage?: number;
 }) {
-  const candidatePerPage = Math.ceil(candidates.length / perPage);
+  const candidatePerPage = Math.ceil(perPage / candidates.length);
 
   return (
     await Promise.all(
-      candidates.map(({ owner, repo }) =>
-        fetchIssues({ owner, repo, page, perPage: candidatePerPage })
+      candidates.map(({ owner, name }) =>
+        fetchIssues({ owner, repo: name, page, perPage: candidatePerPage })
       )
     )
   )
@@ -57,10 +57,17 @@ function fetchIssues({
   page: number;
   perPage?: number;
 }) {
-  return octokit.rest.issues.listForRepo({
-    owner,
-    repo,
-    page,
-    per_page: perPage,
-  });
+  return octokit.rest.issues
+    .listForRepo({
+      owner,
+      repo,
+      page,
+      per_page: perPage,
+    })
+    .then((result) => {
+      return {
+        ...result,
+        data: result.data.map((x) => ({ ...x, repo, owner })),
+      };
+    });
 }
