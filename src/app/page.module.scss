@@ -8,7 +8,9 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 16px;
-  position: relative;
+  position: sticky;
+  top: 0;
+  background-color: #fff;
 
   svg {
     font-size: 24px;
