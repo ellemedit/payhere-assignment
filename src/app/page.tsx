@@ -1,7 +1,7 @@
 "use client";
 
 import { useDeferredValue, useRef, useState } from "react";
-import { MdSearch, MdPending } from "react-icons/md";
+import { MdSearch } from "react-icons/md";
 
 import { GitHubRepoSearchResult } from "~/components/GitHubRepoSearchResult";
 import { LinearProgress } from "~/components/LinearProgress";
@@ -29,6 +29,7 @@ export default function RootIndexPage() {
           type="text"
           value={query}
           onChange={(event) => setQuery(event.currentTarget.value)}
+          autoFocus
         />
         {isSearching && (
           <LinearProgress className={styles["search-input-progress"]} />
