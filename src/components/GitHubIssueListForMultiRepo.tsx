@@ -1,7 +1,10 @@
+"use client";
+
 import { use, useEffect, useState, useTransition } from "react";
 import { fetchIssuesForMultiRepos } from "~/core/octokit";
-import styles from "./GitHubIssueListForMultiRepo.module.scss";
+
 import { LinearProgress } from "./LinearProgress";
+import styles from "./GitHubIssueListForMultiRepo.module.scss";
 
 export function GitHubIssueListForMultiRepo({
   candidates,
@@ -37,14 +40,14 @@ export function GitHubIssueListForMultiRepo({
     .flatMap((x) => x);
 
   return (
-    <div>
+    <div className={styles["issue-list"]}>
       {issues.map((issue) => {
         return (
           <div key={issue.id} className={styles["issue"]}>
             <div className={styles["issue-repo"]}>{/* {issue} */}</div>
             <h3 className={styles["issue-title"]}>{issue.title}</h3>
-            <span>
-              {issue.user?.login} /{" "}
+            <span className={styles["issue-minor"]}>
+              {issue.user?.login} / {issue.comments} comments /{" "}
               {new Date(issue.created_at).toLocaleString("ko-KR")}
             </span>
           </div>
