@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useMemo, useState, useTransition } from "react";
+import { use, useEffect, useMemo, useState, useTransition } from "react";
 import { MdStar, MdStarOutline } from "react-icons/md";
 import { searchRepos } from "~/core/octokit";
 
@@ -9,17 +9,14 @@ import { LinearProgress } from "./LinearProgress";
 
 export function GitHubRepoSearchResult({ query }: { query: string }) {
   const [page, setPage] = useState(1);
-  const [prevQuery, setPrevQuery] = useState(query);
   const [loadingMore, startLoadMore] = useTransition();
   const cache = useMemo(() => {
     return new Map<number, ReturnType<typeof searchRepos>>();
   }, [query]);
 
-  if (prevQuery !== query) {
+  useEffect(() => {
     setPage(1);
-    setPrevQuery(query);
-    cache.clear();
-  }
+  }, [query]);
 
   if (!query) {
     return <p>Search any GitHub repositories</p>;
