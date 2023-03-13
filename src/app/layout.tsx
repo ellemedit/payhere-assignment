@@ -1,6 +1,9 @@
 import { Inter, Noto_Sans_KR } from "next/font/google";
 
+import { AppNavigation } from "~/components/AppNavigation";
+
 import "./globals.css";
+import styles from "./layout.module.scss";
 
 export const metadata = {
   title: "Payhere Assignment",
@@ -18,7 +21,10 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={[inter.className, notoSansKr.className].join(" ")}>
-        {children}
+        <div className={styles.container}>
+          <AppNavigation />
+          {children}
+        </div>
       </body>
     </html>
   );
