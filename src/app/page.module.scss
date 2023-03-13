@@ -1,0 +1,33 @@
+.root {
+}
+
+.search-input-group {
+  border-bottom: 3px solid #222;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  position: relative;
+
+  svg {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  input {
+    border: 0;
+    flex-grow: 1;
+    outline: 0;
+    font-size: 18px;
+  }
+}
+
+.search-input-progress {
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  width: 100%;
+}

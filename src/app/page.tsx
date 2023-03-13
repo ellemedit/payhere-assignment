@@ -1,23 +1,39 @@
 "use client";
 
-import { useDeferredValue, useState } from "react";
+import { useDeferredValue, useRef, useState } from "react";
+import { MdSearch, MdPending } from "react-icons/md";
 
 import { GitHubRepoSearchResult } from "~/components/GitHubRepoSearchResult";
+import { LinearProgress } from "~/components/LinearProgress";
 import { useDebouncedValue } from "~/hooks/useDebouncedValue";
+
+import styles from "./page.module.scss";
 
 export default function RootIndexPage() {
   const [query, setQuery] = useState("");
-  const deferredQuery = useDeferredValue(useDebouncedValue(query));
-  const isStale = query !== deferredQuery;
+  const debouncedQuery = useDebouncedValue(query);
+  const deferredQuery = useDeferredValue(debouncedQuery);
+  const isSearching = query === debouncedQuery && query !== deferredQuery;
+  const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <div>
-      <input
-        type="text"
-        value={query}
-        onChange={(event) => setQuery(event.currentTarget.value)}
-      />
-      <span>{isStale ? "searching ..." : null}</span>
+      <div
+        className={styles["search-input-group"]}
+        onFocus={() => inputRef.current?.focus()}
+        tabIndex={-1}
+      >
+        <MdSearch />
+        <input
+          ref={inputRef}
+          type="text"
+          value={query}
+          onChange={(event) => setQuery(event.currentTarget.value)}
+        />
+        {isSearching && (
+          <LinearProgress className={styles["search-input-progress"]} />
+        )}
+      </div>
       <GitHubRepoSearchResult query={deferredQuery} />
     </div>
   );

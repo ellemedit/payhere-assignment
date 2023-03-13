@@ -4,8 +4,16 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 const octokit = new Octokit({ auth: GITHUB_TOKEN });
 
-export function searchRepos(query: string) {
-  return octokit.rest.search.repos({ q: query, per_page: 40 });
+export function searchRepos({
+  query,
+  perPage = 40,
+  page = 1,
+}: {
+  query: string;
+  page?: number;
+  perPage?: number;
+}) {
+  return octokit.rest.search.repos({ q: query, per_page: perPage, page });
 }
 
 export async function fetchIssuesForMultiRepos({

@@ -2,6 +2,7 @@
   display: flex;
   flex-flow: column nowrap;
   gap: 8px;
+  margin-bottom: 300px;
 }
 
 .repo {
@@ -18,6 +19,7 @@
   height: 48px;
   border-radius: 6px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .repo-primary {
@@ -28,6 +30,7 @@
 
 .repo-header-group {
   display: flex;
+  align-items: center;
   gap: 8px;
 }
 
@@ -42,6 +45,15 @@
 }
 
 .repo-action {
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+
+  font-size: 20px;
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+  margin: -8px;
 }
 
 .repo-primary {
@@ -52,4 +64,23 @@
   color: #444;
   display: flex;
   gap: 12px;
+}
+
+.load-more {
+  padding: 12px 16px;
+  border: 3px solid #222;
+  border-radius: 6px;
+  position: relative;
+  font-size: 16px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.load-more-indicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 3px;
 }
