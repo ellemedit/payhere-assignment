@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useTransition } from "react";
+import { useTransition } from "react";
 import { MdCancel } from "react-icons/md";
 import { GitHubIssueListForMultiRepo } from "~/components/GitHubIssueListForMultiRepo";
 import { LinearProgress } from "~/components/LinearProgress";
@@ -11,7 +11,6 @@ import styles from "./page.module.scss";
 export default function IssueListPage() {
   const likedRepos = [...useLikedRepos().entries()];
   const actions = useLikeActions();
-  const deferredLikedRepos = useDeferredValue(likedRepos);
   const [isPending, startTransition] = useTransition();
 
   return (
@@ -34,9 +33,9 @@ export default function IssueListPage() {
           );
         })}
       </div>
-      {deferredLikedRepos.length > 0 && (
+      {likedRepos.length > 0 && (
         <GitHubIssueListForMultiRepo
-          candidates={deferredLikedRepos.map(([_, x]) => x)}
+          candidates={likedRepos.map(([_, x]) => x)}
         />
       )}
       {isPending && (

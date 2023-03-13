@@ -1,10 +1,11 @@
 "use client";
 
-import { use, useEffect, useState, useTransition } from "react";
+import { useEffect } from "react";
 import { fetchIssuesForMultiRepos } from "~/core/octokit";
 
 import { LinearProgress } from "./LinearProgress";
 import styles from "./GitHubIssueListForMultiRepo.module.scss";
+import { usePagination } from "~/hooks/usePagination";
 
 export function GitHubIssueListForMultiRepo({
   candidates,
@@ -16,28 +17,19 @@ export function GitHubIssueListForMultiRepo({
   ]
     .sort()
     .join("-");
-  const [page, setPage] = useState(1);
-  const [loadingMore, startLoadMore] = useTransition();
-  const [cache, setCache] = useState(
-    () => new Map<number, ReturnType<typeof fetchIssuesForMultiRepos>>()
-  );
+
+  const {
+    reset,
+    loadMore,
+    loadingMore,
+    data: issues,
+  } = usePagination((page) => {
+    return fetchIssuesForMultiRepos({ candidates, page });
+  });
 
   useEffect(() => {
-    setCache(new Map());
-    setPage(1);
-  }, [candidateCacheKey]);
-
-  const issues = Array(page)
-    .fill(null)
-    .map((_, index) => index + 1)
-    .map((page) => {
-      if (!cache.has(page)) {
-        cache.set(page, fetchIssuesForMultiRepos({ candidates, page }));
-      }
-      // use는 rule of hook 조건을 만족할 필요가 없는 유일한 훅입니다. 괜찮은 코드에요!
-      return use(cache.get(page)!);
-    })
-    .flatMap((x) => x);
+    reset();
+  }, [candidateCacheKey, reset]);
 
   return (
     <div className={styles["issue-list"]}>
@@ -61,9 +53,7 @@ export function GitHubIssueListForMultiRepo({
       })}
       <button
         onClick={() => {
-          startLoadMore(() => {
-            setPage((page) => page + 1);
-          });
+          loadMore();
         }}
         disabled={loadingMore}
         className={styles["load-more"]}

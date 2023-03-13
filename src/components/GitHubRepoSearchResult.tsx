@@ -1,27 +1,30 @@
 "use client";
 
-import { use, useEffect, useState, useTransition } from "react";
+import { useEffect } from "react";
 import { MdStar, MdStarOutline } from "react-icons/md";
 import { searchRepos } from "~/core/octokit";
 import { useCanLikeMore, useLikeActions, useLikedRepos } from "~/core/store";
+import { usePagination } from "~/hooks/usePagination";
 
 import styles from "./GitHubRepoSearchResult.module.scss";
 import { LinearProgress } from "./LinearProgress";
 
 export function GitHubRepoSearchResult({ query }: { query: string }) {
-  const [page, setPage] = useState(1);
-  const [loadingMore, startLoadMore] = useTransition();
-  const [cache, setCache] = useState(
-    () => new Map<number, ReturnType<typeof searchRepos>>()
-  );
+  const {
+    reset,
+    loadMore,
+    loadingMore,
+    data: repos,
+  } = usePagination((page) => {
+    return searchRepos({ query, page });
+  });
   const likedRepos = useLikedRepos();
   const canLikeMore = useCanLikeMore();
   const actions = useLikeActions();
 
   useEffect(() => {
-    setPage(1);
-    setCache(new Map());
-  }, [query]);
+    reset();
+  }, [query, reset]);
 
   if (!query) {
     return <p>Search any GitHub repositories</p>;
@@ -30,18 +33,6 @@ export function GitHubRepoSearchResult({ query }: { query: string }) {
   if (query.length < 3) {
     return <p>At least 4 letters required to search</p>;
   }
-
-  const repos = Array(page)
-    .fill(null)
-    .map((_, index) => index + 1)
-    .map((page) => {
-      if (!cache.has(page)) {
-        cache.set(page, searchRepos({ query, page }));
-      }
-      // use는 rule of hook 조건을 만족할 필요가 없는 유일한 훅입니다. 괜찮은 코드에요!
-      return use(cache.get(page)!);
-    })
-    .flatMap((x) => x.data.items);
 
   return (
     <div className={styles["repo-list"]}>
@@ -91,9 +82,7 @@ export function GitHubRepoSearchResult({ query }: { query: string }) {
       })}
       <button
         onClick={() => {
-          startLoadMore(() => {
-            setPage((page) => page + 1);
-          });
+          loadMore();
         }}
         disabled={loadingMore}
         className={styles["load-more"]}
