@@ -1,5 +1,7 @@
 # Payhere Assignment
 
+라이브 데모 주소: https://payhere-assignment.vercel.app/ (30일 뒤 만료되는 개인 깃헙 토큰을 넣어뒀습니다.)
+
 ## 환경
 
 - nodejs 18.14.2, yarn 1.22.29
